@@ -114,6 +114,10 @@ class MainActivity : AppCompatActivity() {
 
 
      */
+
+    /**
+     * funció per guardar informació del usuari amb el token guardat anteriorment, creem una instancia de la classe UserProfile de per tal poder guardar token (utilitzarem per fer cerques i més si cal) i informació del usuari
+     */
     private fun fetchSpotifyUserProfile(token: String?) {
         Log.d("Status: ", "Please Wait...")
         if (token == null) {

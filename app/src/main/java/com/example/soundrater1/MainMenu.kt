@@ -46,6 +46,7 @@ class MainMenu : AppCompatActivity() {
         })
     }
 
+
     private fun searchSpotifySongs(query: String) {
         val retrofit = Retrofit.Builder()
             .baseUrl("https://api.spotify.com/v1/")
@@ -61,20 +62,15 @@ class MainMenu : AppCompatActivity() {
             try {
                 val response = spotifyService.searchTracks("Bearer $accessToken", query).execute()
                 if (response.isSuccessful) {
-                    // Handle successful response
                     val tracks = response.body()?.tracks?.items ?: emptyList()
                     runOnUiThread {
-                        // Update the adapter with the fetched tracks
-                        trackAdapter = TrackAdapter(tracks)
-                        recyclerView.adapter = trackAdapter
+                        trackAdapter.updateTracks(tracks) // Update the RecyclerView with new data
                     }
                 } else {
-                    // Handle error
-                    Log.e("SpotifySearch", "Error: ${response.errorBody()?.string()}")
+                    Log.e("MainMenu", "Error: ${response.errorBody()?.string()}")
                 }
             } catch (e: Exception) {
-                // Handle network error
-                Log.e("SpotifySearch", "Exception", e)
+                Log.e("MainMenu", "Exception", e)
             }
         }
     }
