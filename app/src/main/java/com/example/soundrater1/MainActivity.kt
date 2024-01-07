@@ -1,16 +1,12 @@
 package com.example.soundrater1
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.ContactsContract.CommonDataKinds.Website.URL
 import android.util.Log
 import android.widget.Button
-import com.google.gson.internal.bind.TypeAdapters.URL
-import com.spotify.android.appremote.api.ConnectionParams
-import com.spotify.android.appremote.api.Connector
-import com.spotify.android.appremote.api.SpotifyAppRemote
-import com.spotify.protocol.types.Track
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import com.spotify.sdk.android.auth.AuthorizationClient
@@ -37,9 +33,14 @@ class MainActivity : AppCompatActivity() {
 
     */
 
+    private lateinit var sharedPreferences: SharedPreferences
+    lateinit var userProfile: UserProfile
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        sharedPreferences = getSharedPreferences("SpotifyPreferences", Context.MODE_PRIVATE)
 
         val spotify_login_btn = findViewById<Button>(R.id.spotify_login_btn)
         spotify_login_btn.setOnClickListener {
@@ -63,9 +64,13 @@ class MainActivity : AppCompatActivity() {
         if (SpotifyApi.AUTH_TOKEN_REQUEST_CODE == requestCode) {
             val response = AuthorizationClient.getResponse(resultCode, data)
             val accessToken: String? = response.accessToken
+            if (accessToken != null) {
+                saveAccessToken(accessToken)
+            }
             fetchSpotifyUserProfile(accessToken)
         }
     }
+    /*
     private fun fetchSpotifyUserProfile(token: String?) {
         Log.d("Status: ", "Please Wait...")
         if (token == null) {
@@ -102,9 +107,56 @@ class MainActivity : AppCompatActivity() {
                 }
                 Log.d("Spotify AccessToken :", token)
 
+
             }
         }
     }
 
-    // Rest of your class code (e.g., onStart, onStop)
+
+     */
+    private fun fetchSpotifyUserProfile(token: String?) {
+        Log.d("Status: ", "Please Wait...")
+        if (token == null) {
+            Log.i("Status: ", "Something went wrong - No Access Token found")
+            return
+        }
+        val getUserProfileURL = "https://api.spotify.com/v1/me"
+        GlobalScope.launch(Dispatchers.Default) {
+            val url = URL(getUserProfileURL)
+            val httpsURLConnection = withContext(Dispatchers.IO) {url.openConnection() as HttpsURLConnection }
+            httpsURLConnection.requestMethod = "GET"
+            httpsURLConnection.setRequestProperty("Authorization", "Bearer $token")
+            httpsURLConnection.doInput = true
+            httpsURLConnection.doOutput = false
+            val response = httpsURLConnection.inputStream.bufferedReader()
+                .use { it.readText() }  // defaults to UTF-8
+            withContext(Dispatchers.Main) {
+                val jsonObject = JSONObject(response)
+                // Create an instance of UserProfile with the fetched details
+                val userProfile = UserProfile(
+                    Id = jsonObject.getString("id"),
+                    Token = token,
+                    Username = jsonObject.getString("display_name"),
+                    Email = jsonObject.getString("email"),
+                    RatedSongs = 0
+                )
+                // Log to check if everything worked
+                Log.d("UserProfile", userProfile.toString())
+                val intent = Intent(this@MainActivity, MainMenu::class.java).apply {
+                    putExtra("USER_PROFILE", userProfile)
+                }
+                startActivity(intent)
+            }
+        }
+    }
+
+    /**
+     * Function so access and save save the token so i can use it in a future
+     */
+    private fun saveAccessToken(token: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("SPOTIFY_ACCESS_TOKEN", token)
+        editor.apply()
+        Log.d("MainActivity", "Access Token saved")
+    }
 }
