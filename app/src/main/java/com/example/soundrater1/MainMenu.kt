@@ -1,5 +1,6 @@
 package com.example.soundrater1
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -44,6 +45,11 @@ class MainMenu : AppCompatActivity() {
                 return true
             }
         })
+        trackAdapter.onItemClickListener = object : TrackAdapter.OnItemClickListener {
+            override fun onItemClick(track: TrackItem) {
+                navigateToRateSongActivity(track)
+            }
+        }
     }
 
 
@@ -73,5 +79,14 @@ class MainMenu : AppCompatActivity() {
                 Log.e("MainMenu", "Exception", e)
             }
         }
+    }
+
+    private fun navigateToRateSongActivity(track: TrackItem) {
+        val intent = Intent(this, RateSong::class.java)
+        intent.putExtra("TRACK_NAME", track.name)
+        intent.putExtra("ARTIST_NAME", track.artists.joinToString { it.name })
+        intent.putExtra("IMAGE_URI", track.album.images.firstOrNull()?.url)
+        intent.putExtra("USER_PROFILE", userProfile)
+        startActivity(intent)
     }
 }

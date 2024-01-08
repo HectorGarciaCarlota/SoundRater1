@@ -17,12 +17,19 @@ import com.spotify.protocol.types.Track
 
 class TrackAdapter(private var tracks: List<TrackItem>) : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
 
+    interface OnItemClickListener {
+        fun onItemClick(track: TrackItem)
+    }
+    var onItemClickListener: OnItemClickListener? = null
     class TrackViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val trackNameTextView: TextView = view.findViewById(R.id.textViewTrackName)
         val artistNameTextView: TextView = view.findViewById(R.id.textViewArtistName)
         val trackImage: ImageView = view.findViewById(R.id.track_image)
         // Initialize other views here if needed
     }
+
+
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.item_track, parent, false)
@@ -56,6 +63,9 @@ class TrackAdapter(private var tracks: List<TrackItem>) : RecyclerView.Adapter<T
         } else {
             // Set a default image or leave it blank if no image URL is available
             holder.trackImage.setImageResource(R.drawable.ic_launcher_background)
+        }
+        holder.itemView.setOnClickListener {
+            onItemClickListener?.onItemClick(track)
         }
     }
 
