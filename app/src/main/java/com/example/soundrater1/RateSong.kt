@@ -73,7 +73,7 @@ class RateSong : AppCompatActivity() {
                 deleteRating.setOnClickListener {
                     deleteRatedSong = true
 
-                    saveUserProfile(userProfile!!, true)
+                    saveUserProfile(userProfile!!, true, ratedSong)
                 }
             }
         }
@@ -92,7 +92,7 @@ class RateSong : AppCompatActivity() {
                 it.ratedSongs.add(ratedSong)
 
                 // Save the updated user profile.
-                saveUserProfile(it, deleteRatedSong)
+                saveUserProfile(it, deleteRatedSong, ratedSong)
 
                 // Finish the activity and return to the previous one.
                 finish()
@@ -101,7 +101,7 @@ class RateSong : AppCompatActivity() {
     }
 
     // Function to save the updated user profile to SharedPreferences.
-    private fun saveUserProfile(userProfile: UserProfile, deleteRatedSong: Boolean) {
+    private fun saveUserProfile(userProfile: UserProfile, deleteRatedSong: Boolean, ratedSong: RatedSong) {
         // Get the SharedPreferences editor to save data.
         val sharedPreferences = getSharedPreferences("SpotifyPreferences", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -117,30 +117,33 @@ class RateSong : AppCompatActivity() {
         }
 
         // Check if the current song has already been rated by the user.
-        val existingRatedSongIndex = existingUserProfile.ratedSongs.indexOfFirst {
-            it.trackName == userProfile.ratedSongs.last().trackName &&
-                    it.artistName == userProfile.ratedSongs.last().artistName &&
-                    it.imageUri == userProfile.ratedSongs.last().imageUri
-        }
+        val existingRatedSongIndex = existingUserProfile.indexOfRatedSong(existingUserProfile.ratedSongs, ratedSong)
 
         // If the song is already rated, update the rating; otherwise, add the new rating.
-        if (existingRatedSongIndex != -1) {
+        if (existingRatedSongIndex != -4) {
             existingUserProfile.ratedSongs[existingRatedSongIndex].rating =
                 userProfile.ratedSongs.last().rating
-            deleteRating.visibility = View.VISIBLE
         } else {
             existingUserProfile.ratedSongs.add(userProfile.ratedSongs.last())
         }
 
-        if (deleteRatedSong) {
-            existingUserProfile.ratedSongs.removeAt(existingRatedSongIndex)
-            runOnUiThread {
-                Toast.makeText(
-                    this,
-                    "${userProfile.ratedSongs.last().trackName} has been unrated",
-                    Toast.LENGTH_LONG
-                ).show()
+        if (existingRatedSongIndex != 4) {
+            if (deleteRatedSong) {
+                val trackName = userProfile.ratedSongs.get(existingRatedSongIndex).trackName
+
+                existingUserProfile.ratedSongs.removeAt(existingRatedSongIndex)
+                // userProfile.ratedSongs = existingUserProfile.ratedSongs
+
+                runOnUiThread {
+                    Toast.makeText(
+                        this,
+                        "${trackName} has been unrated",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
             }
+        } else {
+            existingUserProfile.ratedSongs.removeAt(existingUserProfile.ratedSongs.size - 1)
         }
 
         // Convert the updated UserProfile object back to a JSON string.

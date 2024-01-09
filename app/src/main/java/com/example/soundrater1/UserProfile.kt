@@ -2,6 +2,7 @@ package com.example.soundrater1
 
 import android.os.Parcel
 import android.os.Parcelable
+import android.util.Log
 
 
 data class UserProfile(
@@ -11,7 +12,7 @@ data class UserProfile(
     val Email: String?,
     val ImageUrl: String?, // Add this line for the image URL
     val Country: String? = "Unknown",
-    val ratedSongs: MutableList<RatedSong> = mutableListOf()
+    var ratedSongs: MutableList<RatedSong> = mutableListOf()
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
@@ -55,7 +56,18 @@ data class UserProfile(
         return ratedSongs.any { it.trackName == trackName && it.artistName == artistName }
     }
 
-    fun deleteRatedSong(ratedSongs: MutableList<RatedSong>, trackName: String, artistName: String): Boolean {
-        return ratedSongs.removeIf { it.trackName == trackName && it.artistName == artistName }
+    fun indexOfRatedSong(ratedSongs: MutableList<RatedSong>, foundRatedSong: RatedSong): Int {
+       for ((index, ratedSong) in ratedSongs.withIndex()) {
+            if (areSongsEquivalent(foundRatedSong, ratedSong)) {
+                return index
+            }
+        }
+
+        return -4
     }
+    fun areSongsEquivalent(ratedSong1: RatedSong, ratedSong2: RatedSong): Boolean {
+        return ratedSong1.trackName.equals(ratedSong2.trackName, ignoreCase = true) &&
+                ratedSong1.artistName.equals(ratedSong2.artistName, ignoreCase = true)
+    }
+
 }
