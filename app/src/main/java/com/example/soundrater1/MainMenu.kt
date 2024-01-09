@@ -8,10 +8,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+// estava pensat per utilitzar LinearLayout pero amb el menú hem canviat a ConstraintLayout
 import android.widget.LinearLayout
 import android.widget.SearchView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -58,7 +61,26 @@ class MainMenu : AppCompatActivity() {
         trackAdapter = TrackAdapter(emptyList())
         recyclerView.adapter = trackAdapter
 
-        // Retrieve UserProfile from the intent
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.navigation_main_menu -> {
+                    // Nothing happens because we're here already :)
+                    true // return true to show the item as selected
+                }
+                R.id.navigation_profile -> {
+                    // Navigate to the MyProfile activity
+                    val intent = Intent(this, MyProfile::class.java)
+                    startActivity(intent)
+                    true // return true to show the item as selected
+                }
+                else -> false
+            }
+        }
+
+
+
+        // Retrieve UserProfile via getSharedPreferences, we retrieve the Json using Gson library since we did it on mianActivity
         val sharedPreferences = getSharedPreferences("SpotifyPreferences", MODE_PRIVATE)
         val userProfileJson =sharedPreferences.getString("USER_PROFILE", null)
         userProfile = Gson().fromJson(userProfileJson, UserProfile::class.java)
@@ -76,13 +98,13 @@ class MainMenu : AppCompatActivity() {
                 val trackItem = TrackItem(
                     ratedSong.trackName,
                     listOf(Artist(ratedSong.artistName)),
-                    Album(listOf(Image(ratedSong.imageUri, 300, 300)))
+                    Album(listOf(Image(ratedSong.imageUri, 300, 300))) //Les mides son random, realment no les utilitzo pero ho demanava spotify
                 )
                 navigateToRateSongActivity(trackItem, ratedSong)
             }
         } ?: run {
-            // Handle the case where userProfile is null
-            // For example, show an error message or navigate back
+            // Handle the case where userProfile is null, we should never get to this case since it won't let you come to this activity if you can't login from MainActivty
+
         }
         ratedSongsRecyclerView.adapter = ratedSongAdapter
         // Set up the SearchView for Spotify song search
@@ -181,8 +203,9 @@ class MainMenu : AppCompatActivity() {
         if (isSearching) {
             // When searching, show the search RecyclerView and hide the ratedSongsRecyclerView
             recyclerView.visibility = View.VISIBLE
-            val searchParams = recyclerView.layoutParams as LinearLayout.LayoutParams
-            searchParams.weight = 1f
+            val searchParams = recyclerView.layoutParams as ConstraintLayout.LayoutParams
+            searchParams.height = 0
+            searchParams.matchConstraintPercentHeight = 0.5f // 50% height
             recyclerView.layoutParams = searchParams
 
             ratedSongsRecyclerView.visibility = View.GONE
@@ -191,8 +214,9 @@ class MainMenu : AppCompatActivity() {
             recyclerView.visibility = View.GONE
 
             ratedSongsRecyclerView.visibility = View.VISIBLE
-            val ratedParams = ratedSongsRecyclerView.layoutParams as LinearLayout.LayoutParams
-            ratedParams.weight = 1f
+            val ratedParams = ratedSongsRecyclerView.layoutParams as ConstraintLayout.LayoutParams
+            ratedParams.height = 0
+            ratedParams.matchConstraintPercentHeight = 1f // 100% height
             ratedSongsRecyclerView.layoutParams = ratedParams
         }
     }

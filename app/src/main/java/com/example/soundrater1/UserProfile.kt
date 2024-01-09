@@ -9,10 +9,14 @@ data class UserProfile(
     val Token: String?,
     val Username: String?,
     val Email: String?,
-    val ratedSongs: MutableList<RatedSong> = mutableListOf() // Here we'll hold the rated songs
+    val ImageUrl: String?, // Add this line for the image URL
+    val Country: String? = null,
+    val ratedSongs: MutableList<RatedSong> = mutableListOf()
 ) : Parcelable {
 
     constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),

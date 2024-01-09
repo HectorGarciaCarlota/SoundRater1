@@ -10,9 +10,9 @@ import android.widget.TextView
 import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.bumptech.glide.request.RequestOptions.bitmapTransform
+
 import jp.wasabeef.glide.transformations.BlurTransformation
-import com.bumptech.glide.request.RequestOptions.bitmapTransform
+
 import com.google.gson.Gson
 
 

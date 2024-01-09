@@ -1,0 +1,18 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_main_menu"
+        android:icon="@drawable/dall_e_2024_01_09_16_02"
+        android:title="@string/title_main_menu" />
+
+    <!-- PROPIETAT A FALSE PERQUE NO RESPONGUI A CLICKS DEL USUARI -->
+    <item
+        android:id="@+id/dummy_item"
+        android:icon="@android:color/transparent"
+        android:title=""
+        android:enabled="false" />
+
+    <item
+        android:id="@+id/navigation_profile"
+        android:icon="@drawable/dall_e_2024_01_09_15_57_00_a_simple_vector_style_image_of_a_human_head"
+        android:title="@string/title_profile" />
+</menu>

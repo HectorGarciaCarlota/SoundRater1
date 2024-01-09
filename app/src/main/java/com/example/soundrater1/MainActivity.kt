@@ -87,8 +87,21 @@ class MainActivity : AppCompatActivity() {
                     Id = jsonObject.getString("id"),
                     Token = token,
                     Username = jsonObject.getString("display_name"),
-                    Email = jsonObject.getString("email")
+                    Email = jsonObject.getString("email"),
+                    Country = jsonObject.optString("country"), // user pot tenir country o pot no tenir, per el que retornaria null, per aixo posem optString que retorna String?
+                    ImageUrl = jsonObject.optJSONArray("images")?.optJSONObject(0)?.optString("url"),  // El json retorna una array en imatges
+
                 )
+                /**
+                 * La documentació de la api retorna això
+                 * "images": [
+                 *     {
+                 *       "url": "https://i.scdn.co/image/ab67616d00001e02ff9ca10b55ce82ae553c8228",
+                 *       "height": 300,
+                 *       "width": 300
+                 *     }
+                 *   ],
+                 */
                 // Log to check if everything worked
                 Log.d("UserProfile", userProfile.toString())
                 // Save the UserProfile object in SharedPreferences
@@ -111,7 +124,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun saveUserProfile(userProfile: UserProfile) {
         val gson = Gson()
-        val userProfileJson = gson.toJson(UserProfile(userProfile.Id, userProfile.Token, userProfile.Username, userProfile.Email))
+        val userProfileJson = gson.toJson(UserProfile(userProfile.Id, userProfile.Token, userProfile.Username, userProfile.Email, userProfile.ImageUrl, userProfile.Country))
         val editor = sharedPreferences.edit()
         editor.putString("USER_PROFILE", userProfileJson)
         editor.apply()
