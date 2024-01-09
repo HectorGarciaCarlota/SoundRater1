@@ -1,9 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<!-- Use FrameLayout to layer images -->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".RateSong">
+    android:layout_height="match_parent">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <!-- Blurred Background ImageView -->
+    <ImageView
+        android:id="@+id/imageViewAlbumBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop"
+        android:alpha="0.3" /> <!-- Adjust alpha for desired blur effect -->
+
+    <!-- LinearLayout for other contents -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
+
+        <!-- Clear Foreground ImageView -->
+        <ImageView
+            android:id="@+id/imageViewAlbum"
+            android:layout_width="327dp"
+            android:layout_height="279dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="32dp" />
+
+        <!-- TextView for Track Name -->
+
+        <!-- TextView for Artist Name -->
+
+        <TextView
+            android:id="@+id/textViewTrackName"
+            android:layout_width="311dp"
+            android:layout_height="82dp"
+            android:layout_marginTop="50dp"
+            android:gravity="center"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            />
+
+        <TextView
+            android:id="@+id/textViewArtistName"
+            android:layout_width="234dp"
+            android:layout_height="49dp"
+            android:layout_marginTop="16dp"
+            android:gravity="center"
+            android:textSize="20sp" />
+
+        <!-- RatingBar for user rating -->
+        <RatingBar
+            android:id="@+id/ratingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:numStars="5"
+            android:rating="0"
+            android:stepSize="1.0" />
+
+        <!-- Add other views as needed -->
+    </LinearLayout>
+</FrameLayout>

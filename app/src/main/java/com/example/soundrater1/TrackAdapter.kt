@@ -13,7 +13,6 @@ import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.bumptech.glide.request.target.Target
-import com.spotify.protocol.types.Track
 
 class TrackAdapter(private var tracks: List<TrackItem>) : RecyclerView.Adapter<TrackAdapter.TrackViewHolder>() {
 
@@ -39,7 +38,6 @@ class TrackAdapter(private var tracks: List<TrackItem>) : RecyclerView.Adapter<T
     override fun onBindViewHolder(holder: TrackViewHolder, position: Int) {
         val track = tracks[position]
         holder.trackNameTextView.text = track.name
-
         val artistName = if (track.artists.isNotEmpty()) track.artists[0].name else "Unknown Artist" // Si fiquem nomes 1 artista dona error ? display multiple artists
         holder.artistNameTextView.text = artistName
 

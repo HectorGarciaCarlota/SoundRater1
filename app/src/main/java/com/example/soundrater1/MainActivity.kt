@@ -7,6 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import com.example.soundrater1.MainMenu
+import com.example.soundrater1.R
+import com.example.soundrater1.SpotifyApi
+import com.example.soundrater1.UserProfile
 import com.spotify.sdk.android.auth.AuthorizationRequest
 import com.spotify.sdk.android.auth.AuthorizationResponse
 import com.spotify.sdk.android.auth.AuthorizationClient
@@ -17,21 +21,9 @@ import kotlinx.coroutines.withContext
 import org.json.JSONObject
 import java.net.URL
 import javax.net.ssl.HttpsURLConnection
+import com.google.gson.Gson
 
 class MainActivity : AppCompatActivity() {
-
-   /* override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-
-        val builder = AuthorizationRequest.Builder(SpotifyApi.CLIENT_ID, AuthorizationResponse.Type.TOKEN, SpotifyApi.REDIRECT_URI)
-        builder.setScopes(arrayOf("streaming"))
-        val request = builder.build()
-
-        AuthorizationClient.openLoginInBrowser(this, request)
-    }
-
-    */
 
     private lateinit var sharedPreferences: SharedPreferences
     lateinit var userProfile: UserProfile
@@ -52,6 +44,7 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+
     private fun getAuthenticationRequest(type: AuthorizationResponse.Type): AuthorizationRequest {
         return AuthorizationRequest.Builder(SpotifyApi.CLIENT_ID, type, SpotifyApi.REDIRECT_URI)
             .setShowDialog(false)
@@ -70,54 +63,7 @@ class MainActivity : AppCompatActivity() {
             fetchSpotifyUserProfile(accessToken)
         }
     }
-    /*
-    private fun fetchSpotifyUserProfile(token: String?) {
-        Log.d("Status: ", "Please Wait...")
-        if (token == null) {
-            Log.i("Status: ", "Something went wrong - No Access Token found")
-            return
-        }
-        val getUserProfileURL = "https://api.spotify.com/v1/me"
-        GlobalScope.launch(Dispatchers.Default) {
-            val url = URL(getUserProfileURL)
-            val httpsURLConnection = withContext(Dispatchers.IO) {url.openConnection() as HttpsURLConnection }
-            httpsURLConnection.requestMethod = "GET"
-            httpsURLConnection.setRequestProperty("Authorization", "Bearer $token")
-            httpsURLConnection.doInput = true
-            httpsURLConnection.doOutput = false
-            val response = httpsURLConnection.inputStream.bufferedReader()
-                .use { it.readText() }  // defaults to UTF-8
-            withContext(Dispatchers.Main) {
-                val jsonObject = JSONObject(response)
-                // Spotify Id
-                val spotifyId = jsonObject.getString("id")
-                Log.d("Spotify Id :", spotifyId)
-                // Spotify Display Name
-                val spotifyDisplayName = jsonObject.getString("display_name")
-                Log.d("Spotify Display Name :", spotifyDisplayName)
-                // Spotify Email
-                val spotifyEmail = jsonObject.getString("email")
-                Log.d("Spotify Email :", spotifyEmail)
-                val spotifyAvatarArray = jsonObject.getJSONArray("images")
-                //Check if user has Avatar
-                var spotifyAvatarURL = ""
-                if (spotifyAvatarArray.length() > 0) {
-                    spotifyAvatarURL = spotifyAvatarArray.getJSONObject(0).getString("url")
-                    Log.d("Spotify Avatar : ", spotifyAvatarURL)
-                }
-                Log.d("Spotify AccessToken :", token)
 
-
-            }
-        }
-    }
-
-
-     */
-
-    /**
-     * funció per guardar informació del usuari amb el token guardat anteriorment, creem una instancia de la classe UserProfile de per tal poder guardar token (utilitzarem per fer cerques i més si cal) i informació del usuari
-     */
     private fun fetchSpotifyUserProfile(token: String?) {
         Log.d("Status: ", "Please Wait...")
         if (token == null) {
@@ -141,26 +87,35 @@ class MainActivity : AppCompatActivity() {
                     Id = jsonObject.getString("id"),
                     Token = token,
                     Username = jsonObject.getString("display_name"),
-                    Email = jsonObject.getString("email"),
-                    RatedSongs = 0
+                    Email = jsonObject.getString("email")
                 )
                 // Log to check if everything worked
                 Log.d("UserProfile", userProfile.toString())
+                // Save the UserProfile object in SharedPreferences
+                saveUserProfile(userProfile)
                 val intent = Intent(this@MainActivity, MainMenu::class.java).apply {
                     putExtra("USER_PROFILE", userProfile)
                 }
                 startActivity(intent)
             }
         }
+
     }
 
-    /**
-     * Function so access and save save the token so i can use it in a future
-     */
     private fun saveAccessToken(token: String) {
         val editor = sharedPreferences.edit()
         editor.putString("SPOTIFY_ACCESS_TOKEN", token)
         editor.apply()
         Log.d("MainActivity", "Access Token saved")
+    }
+
+    private fun saveUserProfile(userProfile: UserProfile) {
+        val gson = Gson()
+        val userProfileJson = gson.toJson(UserProfile(userProfile.Id, userProfile.Token, userProfile.Username, userProfile.Email))
+        val editor = sharedPreferences.edit()
+        editor.putString("USER_PROFILE", userProfileJson)
+        editor.apply()
+        Log.d("MainActivity", "User Profile saved")
+
     }
 }

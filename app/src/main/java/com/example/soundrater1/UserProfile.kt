@@ -4,13 +4,22 @@ import android.os.Parcel
 import android.os.Parcelable
 
 
-data class UserProfile(val Id: String?, val Token: String?, val Username: String?, val Email: String?, val RatedSongs: Int): Parcelable {
+data class UserProfile(
+    val Id: String?,
+    val Token: String?,
+    val Username: String?,
+    val Email: String?,
+    val ratedSongs: MutableList<RatedSong> = mutableListOf() // Here we'll hold the rated songs
+) : Parcelable {
+
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString(),
-        parcel.readInt()
+        mutableListOf<RatedSong>().apply {
+            parcel.readList(this, RatedSong::class.java.classLoader) // Read the rated songs list from the parcel
+        }
     ) {
     }
 
@@ -19,7 +28,7 @@ data class UserProfile(val Id: String?, val Token: String?, val Username: String
         parcel.writeString(Token)
         parcel.writeString(Username)
         parcel.writeString(Email)
-        parcel.writeInt(RatedSongs)
+        parcel.writeList(ratedSongs) // Write the rated songs list to the parcel
     }
 
     override fun describeContents(): Int {
@@ -35,5 +44,4 @@ data class UserProfile(val Id: String?, val Token: String?, val Username: String
             return arrayOfNulls(size)
         }
     }
-
 }

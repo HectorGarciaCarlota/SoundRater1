@@ -5,11 +5,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainMenu">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <SearchView
             android:id="@+id/searchView"
@@ -20,18 +23,18 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="0dp"
+            android:layout_weight="0"
+            android:visibility="gone"
+            android:layout_marginTop="8dp"/>
 
-        <!-- Add other UI elements here -->
+        <!-- RecyclerView for displaying rated songs -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/ratedSongsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
 
     </LinearLayout>
-
-    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <!-- Other UI elements here -->
-
-    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
