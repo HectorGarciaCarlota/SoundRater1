@@ -205,7 +205,7 @@ class MainMenu : AppCompatActivity() {
             recyclerView.visibility = View.VISIBLE
             val searchParams = recyclerView.layoutParams as ConstraintLayout.LayoutParams
             searchParams.height = 0
-            searchParams.matchConstraintPercentHeight = 0.5f // 50% height
+            searchParams.matchConstraintPercentHeight = 1f // 100% height
             recyclerView.layoutParams = searchParams
 
             ratedSongsRecyclerView.visibility = View.GONE

@@ -42,8 +42,6 @@ class RatedSongAdapter(
             .into(holder.ivAlbumCover)
 
 // Load the album cover with a blur effect for the background
-
-// Load the album cover with a blur effect for the background
         Glide.with(holder.itemView.context)
             .load(ratedSong.imageUri)
             .apply(bitmapTransform(BlurTransformation(25, 3)))

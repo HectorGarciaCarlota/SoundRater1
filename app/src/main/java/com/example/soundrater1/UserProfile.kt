@@ -10,7 +10,7 @@ data class UserProfile(
     val Username: String?,
     val Email: String?,
     val ImageUrl: String?, // Add this line for the image URL
-    val Country: String? = null,
+    val Country: String? = "Unknown",
     val ratedSongs: MutableList<RatedSong> = mutableListOf()
 ) : Parcelable {
 
@@ -49,5 +49,13 @@ data class UserProfile(
         override fun newArray(size: Int): Array<UserProfile?> {
             return arrayOfNulls(size)
         }
+    }
+
+    fun isSongInRated(ratedSongs: MutableList<RatedSong>, trackName: String, artistName: String): Boolean {
+        return ratedSongs.any { it.trackName == trackName && it.artistName == artistName }
+    }
+
+    fun deleteRatedSong(ratedSongs: MutableList<RatedSong>, trackName: String, artistName: String): Boolean {
+        return ratedSongs.removeIf { it.trackName == trackName && it.artistName == artistName }
     }
 }

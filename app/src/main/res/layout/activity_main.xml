@@ -5,15 +5,17 @@
     android:layout_height="match_parent"
     android:background="@color/colorPrimary"
     tools:context=".MainActivity">
+
     <Button
         android:id="@+id/spotify_login_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:background="@drawable/rounded_corners"
+        android:background="#FFFFFF"
         android:drawablePadding="8dp"
         android:padding="8dp"
         android:text="Log in with Spotify"
         android:textAllCaps="false"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/black"
+        android:textColorHighlight="#FFFFFF" />
 </RelativeLayout>

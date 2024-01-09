@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
@@ -15,16 +17,18 @@ import jp.wasabeef.glide.transformations.BlurTransformation
 
 import com.google.gson.Gson
 
-
 // The RateSong activity allows users to rate a song and saves their rating.
 class RateSong : AppCompatActivity() {
     // Variable to hold the UserProfile object that may be passed to this activity.
     private var userProfile: UserProfile? = null
+    private lateinit var deleteRating: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // Set the content view to the activity_rate_song layout.
         setContentView(R.layout.activity_rate_song)
+
+        var deleteRatedSong: Boolean = false;
 
         // Extract the track name, artist name, and image URI from the intent that started this activity.
         val trackName = intent.getStringExtra("TRACK_NAME")
@@ -39,6 +43,7 @@ class RateSong : AppCompatActivity() {
         val albumImageView = findViewById<ImageView>(R.id.imageViewAlbum)
         val backgroundImageView = findViewById<ImageView>(R.id.imageViewAlbumBackground)
         val ratingBar = findViewById<RatingBar>(R.id.ratingBar)
+        deleteRating = findViewById<Button>(R.id.btnDeleteRating)
 
         // Set the text for the TextViews to the track and artist names.
         trackNameTextView.text = trackName
@@ -53,6 +58,26 @@ class RateSong : AppCompatActivity() {
             .apply(RequestOptions.bitmapTransform(BlurTransformation(25, 3)))
             .into(backgroundImageView)
 
+        userProfile?.let {
+            // Create a new RatedSong object with the track details and rating.
+            val ratedSong = RatedSong(
+                trackName = trackName ?: "",
+                artistName = artistName ?: "",
+                imageUri = imageUri ?: "",
+                rating = 0.0f
+            )
+
+            if (it.isSongInRated(it.ratedSongs, ratedSong.trackName, ratedSong.artistName)) {
+                deleteRating.visibility = View.VISIBLE
+
+                deleteRating.setOnClickListener {
+                    deleteRatedSong = true
+
+                    saveUserProfile(userProfile!!, true)
+                }
+            }
+        }
+
         // Set up a listener that reacts to changes in the rating bar's rating.
         ratingBar.setOnRatingBarChangeListener { _, rating, _ ->
             userProfile?.let {
@@ -65,8 +90,10 @@ class RateSong : AppCompatActivity() {
                 )
                 // Add the new RatedSong to the user's list of rated songs.
                 it.ratedSongs.add(ratedSong)
+
                 // Save the updated user profile.
-                saveUserProfile(it)
+                saveUserProfile(it, deleteRatedSong)
+
                 // Finish the activity and return to the previous one.
                 finish()
             }
@@ -74,7 +101,7 @@ class RateSong : AppCompatActivity() {
     }
 
     // Function to save the updated user profile to SharedPreferences.
-    private fun saveUserProfile(userProfile: UserProfile) {
+    private fun saveUserProfile(userProfile: UserProfile, deleteRatedSong: Boolean) {
         // Get the SharedPreferences editor to save data.
         val sharedPreferences = getSharedPreferences("SpotifyPreferences", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()
@@ -100,8 +127,20 @@ class RateSong : AppCompatActivity() {
         if (existingRatedSongIndex != -1) {
             existingUserProfile.ratedSongs[existingRatedSongIndex].rating =
                 userProfile.ratedSongs.last().rating
+            deleteRating.visibility = View.VISIBLE
         } else {
             existingUserProfile.ratedSongs.add(userProfile.ratedSongs.last())
+        }
+
+        if (deleteRatedSong) {
+            existingUserProfile.ratedSongs.removeAt(existingRatedSongIndex)
+            runOnUiThread {
+                Toast.makeText(
+                    this,
+                    "${userProfile.ratedSongs.last().trackName} has been unrated",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
 
         // Convert the updated UserProfile object back to a JSON string.
@@ -114,12 +153,14 @@ class RateSong : AppCompatActivity() {
         Log.d("RateSong", "UserProfile saved: $updatedUserProfileJson")
 
         // Display a toast message confirming the rating was saved.
-        runOnUiThread {
-            Toast.makeText(
-                this,
-                "Rated '${userProfile.ratedSongs.last().trackName}' by ${userProfile.ratedSongs.last().artistName} with ${userProfile.ratedSongs.last().rating} stars",
-                Toast.LENGTH_LONG
-            ).show()
+        if (!deleteRatedSong) {
+            runOnUiThread {
+                Toast.makeText(
+                    this,
+                    "Rated '${userProfile.ratedSongs.last().trackName}' by ${userProfile.ratedSongs.last().artistName} with ${userProfile.ratedSongs.last().rating} stars",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
 
         // Close the activity and return to the previous screen.

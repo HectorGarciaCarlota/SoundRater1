@@ -48,7 +48,7 @@ class MainActivity : AppCompatActivity() {
     private fun getAuthenticationRequest(type: AuthorizationResponse.Type): AuthorizationRequest {
         return AuthorizationRequest.Builder(SpotifyApi.CLIENT_ID, type, SpotifyApi.REDIRECT_URI)
             .setShowDialog(false)
-            .setScopes(arrayOf("user-read-email"))
+            .setScopes(arrayOf("user-read-email", "user-read-private")) // necessitava permisos tmb de user-read-private per accedir al country en el JSON ^^
             .build()
     }
 

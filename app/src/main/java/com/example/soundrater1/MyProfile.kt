@@ -1,9 +1,11 @@
 package com.example.soundrater1
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
@@ -12,6 +14,7 @@ import com.google.gson.Gson
 
 class MyProfile : AppCompatActivity() {
     private var userProfile: UserProfile? = null
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_profile)
@@ -28,6 +31,11 @@ class MyProfile : AppCompatActivity() {
         val ratedSongsCountTextView = findViewById<TextView>(R.id.rated_songs_count)
         val countryTextView = findViewById<TextView>(R.id.country)
 
+        val logoutButton = findViewById<Button>(R.id.logout_button)
+        logoutButton.setOnClickListener {
+            logout()
+        }
+
         // Set the values of the views
         userProfile?.let {
             // Set the name and email
@@ -37,9 +45,11 @@ class MyProfile : AppCompatActivity() {
             val ratedSongsText = getString(R.string.rated_songs_count, it.ratedSongs.size) // Set ups value for ratedSongs number, made a string value :9
             ratedSongsCountTextView.text = ratedSongsText
 
-            countryTextView.text = "Country: ${it.Country ?: "Unknown"}"
+            val countryText = getString(R.string.profile_country, it.Country)
+            countryTextView.text = countryText
 
-            // If you have an image URL for the profile picture, use Glide or another image loading library to load it:
+
+            // Using Glide library to change images
             Glide.with(this).load(it.ImageUrl).into(profileImageView)
         }
         // Set the profile menu item as selected (we are highlighting the item ^^)
@@ -60,6 +70,20 @@ class MyProfile : AppCompatActivity() {
                 else -> false
             }
         }
+    }
+
+    private fun logout() {
+        // Clear the token from SharedPreferences
+        val sharedPreferences = getSharedPreferences("SpotifyPreferences", Context.MODE_PRIVATE)
+        sharedPreferences.edit().remove("SPOTIFY_ACCESS_TOKEN").apply()
+        sharedPreferences.edit().remove("USER_PROFILE").apply()
+
+        // Redirect to the login activity
+        val loginIntent = Intent(this, MainActivity::class.java)
+        // Clear all activities on top of the MainActivity in the back stack
+        loginIntent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(loginIntent)
+        finish() // Close the current activity
     }
 }
 

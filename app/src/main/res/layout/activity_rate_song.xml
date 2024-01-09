@@ -60,6 +60,14 @@
             android:rating="0"
             android:stepSize="1.0" />
 
+        <Button
+            android:id="@+id/btnDeleteRating"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="@string/delete_rating"
+            android:visibility="gone"/>
+
         <!-- Add other views as needed -->
     </LinearLayout>
 </FrameLayout>
