@@ -32,6 +32,8 @@ data class UserProfile(
         parcel.writeString(Token)
         parcel.writeString(Username)
         parcel.writeString(Email)
+        parcel.writeString(ImageUrl)
+        parcel.writeString(Country)
         parcel.writeList(ratedSongs) // Write the rated songs list to the parcel
     }
 
