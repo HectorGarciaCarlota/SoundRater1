@@ -49,6 +49,7 @@ class RateSong : AppCompatActivity() {
         trackNameTextView.text = trackName
         artistNameTextView.text = artistName
 
+
         // Use Glide to load the album cover image into the ImageView.
         Glide.with(this).load(imageUri).into(albumImageView)
 
@@ -60,7 +61,7 @@ class RateSong : AppCompatActivity() {
 
         userProfile?.let {
             // Create a new RatedSong object with the track details and rating.
-            val ratedSong = RatedSong(
+            var ratedSong = RatedSong(
                 trackName = trackName ?: "",
                 artistName = artistName ?: "",
                 imageUri = imageUri ?: "",
@@ -68,6 +69,12 @@ class RateSong : AppCompatActivity() {
             )
 
             if (it.isSongInRated(it.ratedSongs, ratedSong.trackName, ratedSong.artistName)) {
+                // Show the rating of the actual song
+                val idRatedSong = it.indexOfRatedSong(it.ratedSongs, ratedSong)
+                ratedSong = it.ratedSongs[idRatedSong]
+                ratingBar.rating = ratedSong.rating
+
+                // Enable the rating delete button
                 deleteRating.visibility = View.VISIBLE
 
                 deleteRating.setOnClickListener {

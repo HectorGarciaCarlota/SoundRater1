@@ -1,16 +1,15 @@
 package com.example.soundrater1
 
+// estava pensat per utilitzar LinearLayout pero amb el menú hem canviat a ConstraintLayout
 import RatedSongAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-// estava pensat per utilitzar LinearLayout pero amb el menú hem canviat a ConstraintLayout
-import android.widget.LinearLayout
 import android.widget.SearchView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +20,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
 
 @Suppress("DEPRECATION")
 class MainMenu : AppCompatActivity() {
@@ -104,17 +104,23 @@ class MainMenu : AppCompatActivity() {
             }
         } ?: run {
             // Handle the case where userProfile is null, we should never get to this case since it won't let you come to this activity if you can't login from MainActivty
-
         }
+
         ratedSongsRecyclerView.adapter = ratedSongAdapter
         // Set up the SearchView for Spotify song search
         val searchView = findViewById<SearchView>(R.id.searchView)
+
+        searchView.setOnClickListener {
+            searchView.isIconified = false // This will open the SearchView when ever is clicked on it : )
+        }
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 query?.let {
                     searchSpotifySongs(it)
                     updateRecyclerViewVisibility(true)
                 }
+
                 return true
             }
 
@@ -122,6 +128,7 @@ class MainMenu : AppCompatActivity() {
                 if (newText.isNullOrEmpty()) {
                     updateRecyclerViewVisibility(false)
                 }
+
                 return true
             }
         })
