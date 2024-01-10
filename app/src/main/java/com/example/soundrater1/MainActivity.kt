@@ -34,7 +34,20 @@ class MainActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences("SpotifyPreferences", Context.MODE_PRIVATE)
 
+        // Check if access token already exists
+        val accessToken = sharedPreferences.getString("SPOTIFY_ACCESS_TOKEN", null)
+
+        // If the token already exists don't do the log in
+        if (accessToken != null) {
+            // Directly navigate to MainMenu if token exists
+            val intent = Intent(this, MainMenu::class.java)
+            startActivity(intent)
+            finish() // Close MainActivity to prevent returning to it when MainMenu is closed
+            return
+        }
+
         val spotify_login_btn = findViewById<Button>(R.id.spotify_login_btn)
+
         spotify_login_btn.setOnClickListener {
             val request = getAuthenticationRequest(AuthorizationResponse.Type.TOKEN)
             AuthorizationClient.openLoginActivity(
@@ -54,23 +67,30 @@ class MainActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+
         if (SpotifyApi.AUTH_TOKEN_REQUEST_CODE == requestCode) {
             val response = AuthorizationClient.getResponse(resultCode, data)
+
             val accessToken: String? = response.accessToken
+
             if (accessToken != null) {
                 saveAccessToken(accessToken)
             }
+
             fetchSpotifyUserProfile(accessToken)
         }
     }
 
     private fun fetchSpotifyUserProfile(token: String?) {
         Log.d("Status: ", "Please Wait...")
+
         if (token == null) {
             Log.i("Status: ", "Something went wrong - No Access Token found")
             return
         }
+
         val getUserProfileURL = "https://api.spotify.com/v1/me"
+
         GlobalScope.launch(Dispatchers.Default) {
             val url = URL(getUserProfileURL)
             val httpsURLConnection = withContext(Dispatchers.IO) {url.openConnection() as HttpsURLConnection }
@@ -92,6 +112,7 @@ class MainActivity : AppCompatActivity() {
                     ImageUrl = jsonObject.optJSONArray("images")?.optJSONObject(0)?.optString("url"),  // El json retorna una array en imatges
 
                 )
+
                 /**
                  * La documentació de la api retorna això
                  * "images": [
@@ -106,10 +127,14 @@ class MainActivity : AppCompatActivity() {
                 Log.d("UserProfile", userProfile.toString())
                 // Save the UserProfile object in SharedPreferences
                 saveUserProfile(userProfile)
+
                 val intent = Intent(this@MainActivity, MainMenu::class.java).apply {
                     putExtra("USER_PROFILE", userProfile)
                 }
+
                 startActivity(intent)
+
+                finish()
             }
         }
 

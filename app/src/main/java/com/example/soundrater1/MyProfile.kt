@@ -61,6 +61,7 @@ class MyProfile : AppCompatActivity() {
                     // Navigate to the MainMenu activity
                     val intent = Intent(this, MainMenu::class.java)
                     startActivity(intent)
+                    finish()
                     true
                 }
                 R.id.navigation_profile -> {

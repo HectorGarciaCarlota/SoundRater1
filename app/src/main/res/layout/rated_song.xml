@@ -47,8 +47,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:marqueeRepeatLimit="marquee_forever"
-                    android:textSize="16sp"
-                    android:textColor="#FFF" />
+                    android:textSize="16sp"/>
             </HorizontalScrollView>
 
             <HorizontalScrollView
@@ -66,8 +65,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:marqueeRepeatLimit="marquee_forever"
-                    android:textSize="14sp"
-                    android:textColor="#FFF" />
+                    android:textSize="14sp"/>
             </HorizontalScrollView>
 
         </LinearLayout>

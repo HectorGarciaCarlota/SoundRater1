@@ -109,6 +109,8 @@ class RateSong : AppCompatActivity() {
 
     // Function to save the updated user profile to SharedPreferences.
     private fun saveUserProfile(userProfile: UserProfile, deleteRatedSong: Boolean, ratedSong: RatedSong) {
+        Log.d("Ploru fort", ratedSong.toString())
+
         // Get the SharedPreferences editor to save data.
         val sharedPreferences = getSharedPreferences("SpotifyPreferences", Context.MODE_PRIVATE)
         val editor = sharedPreferences.edit()

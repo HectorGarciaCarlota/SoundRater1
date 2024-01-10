@@ -15,6 +15,20 @@ data class UserProfile(
     var ratedSongs: MutableList<RatedSong> = mutableListOf()
 ) : Parcelable {
 
+    public fun initRatedSongs() {
+        var ratedSong = RatedSong(trackName = "lil jeep", artistName = "Lil Peep", imageUri = "https://i.scdn.co/image/ab67616d0000b2731fdf8f713b0f86a99f5483b0", rating = 5.0f)
+        this.ratedSongs.add(ratedSong)
+
+        ratedSong = RatedSong(trackName = "Gibraltar", artistName = "Soto Asa", imageUri = "https://i.scdn.co/image/ab67616d0000b2739b34db9de3fef17d071099ed", rating = 5.0f)
+        this.ratedSongs.add(ratedSong)
+
+        ratedSong = RatedSong(trackName = "I spoke to the devil in miami, he said everything would be fine", artistName = "XXXTENTACION", imageUri = "https://i.scdn.co/image/ab67616d0000b27352cc5e3765a135c52e1bbbbc", rating = 4.0f)
+        this.ratedSongs.add(ratedSong)
+
+        ratedSong = RatedSong(trackName = "lil kennedy", artistName = "Lil Peep, Nedarb", imageUri = "https://i.scdn.co/image/ab67616d0000b27303c55aa9d1c967525b345544", rating = 5.0f)
+        this.ratedSongs.add(ratedSong)
+    }
+
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readString(),
@@ -24,8 +38,9 @@ data class UserProfile(
         parcel.readString(),
         mutableListOf<RatedSong>().apply {
             parcel.readList(this, RatedSong::class.java.classLoader) // Read the rated songs list from the parcel
-        }
+        },
     ) {
+        initRatedSongs()
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

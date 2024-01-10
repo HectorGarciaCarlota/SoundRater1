@@ -5,15 +5,19 @@ import RatedSongAdapter
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -55,6 +59,7 @@ class MainMenu : AppCompatActivity() {
         sharedPreferences = getSharedPreferences("SpotifyPreferences", Context.MODE_PRIVATE)
         retrieveUserProfile()
         checkSavedData()
+
         // Set up the RecyclerView for Spotify song search
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -72,13 +77,12 @@ class MainMenu : AppCompatActivity() {
                     // Navigate to the MyProfile activity
                     val intent = Intent(this, MyProfile::class.java)
                     startActivity(intent)
+                    finish()
                     true // return true to show the item as selected
                 }
                 else -> false
             }
         }
-
-
 
         // Retrieve UserProfile via getSharedPreferences, we retrieve the Json using Gson library since we did it on mianActivity
         val sharedPreferences = getSharedPreferences("SpotifyPreferences", MODE_PRIVATE)
@@ -121,6 +125,8 @@ class MainMenu : AppCompatActivity() {
                     updateRecyclerViewVisibility(true)
                 }
 
+                hideKeyboard()
+
                 return true
             }
 
@@ -131,7 +137,25 @@ class MainMenu : AppCompatActivity() {
 
                 return true
             }
+
+            // Function that closes the keyboard
+            private fun hideKeyboard() {
+                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(searchView.windowToken, 0)
+            }
         })
+
+        // Closes the SearchView when it loses focus
+        searchView.setOnFocusChangeListener { _, hasFocus ->
+            fun hideKeyboard() {
+                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(searchView.windowToken, 0)
+            }
+
+            if (!hasFocus) {
+                hideKeyboard()
+            }
+        }
 
         // Set the click listener for items in the search result RecyclerView
         trackAdapter.onItemClickListener = object : TrackAdapter.OnItemClickListener {
@@ -139,7 +163,58 @@ class MainMenu : AppCompatActivity() {
                 navigateToRateSongActivity(track)
             }
         }
+
+        // Closes the keyboard when scroll is activa
+        recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy != 0) {
+                    val searchView = findViewById<SearchView>(R.id.searchView)
+                    searchView.clearFocus()
+                    hideKeyboard()
+                }
+            }
+        })
+
+        // Closes the keyboard when scroll is activa
+        ratedSongsRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                if (dy != 0) {
+                    val searchView = findViewById<SearchView>(R.id.searchView)
+                    searchView.clearFocus()
+                    hideKeyboard()
+                }
+            }
+        })
+
     }
+
+    // Closes the keyboard when you click outside the SearchView
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        if (ev.action == MotionEvent.ACTION_DOWN) {
+            val v = currentFocus
+            if (v is SearchView) {
+                val outRect = Rect()
+
+                v.getGlobalVisibleRect(outRect)
+
+                if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                    v.clearFocus()
+
+                    hideKeyboard()
+                }
+            }
+        }
+
+        return super.dispatchTouchEvent(ev)
+    }
+
+    private fun hideKeyboard() {
+        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(currentFocus?.windowToken, 0)
+    }
+
 
     // Searches Spotify songs based on the user's query
     private fun searchSpotifySongs(query: String) {
