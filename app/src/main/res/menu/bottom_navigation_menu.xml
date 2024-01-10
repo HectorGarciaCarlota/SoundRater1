@@ -7,9 +7,11 @@
     <!-- PROPIETAT A FALSE PERQUE NO RESPONGUI A CLICKS DEL USUARI -->
     <item
         android:id="@+id/dummy_item"
-        android:icon="@android:color/transparent"
-        android:title=""
-        android:enabled="false" />
+        android:checkable="false"
+        android:checked="false"
+        android:enabled="false"
+        android:icon="@drawable/app_icon"
+        android:title="" />
 
     <item
         android:id="@+id/navigation_profile"

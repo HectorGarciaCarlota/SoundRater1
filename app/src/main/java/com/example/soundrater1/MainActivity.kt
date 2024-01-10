@@ -128,6 +128,8 @@ class MainActivity : AppCompatActivity() {
                 // Save the UserProfile object in SharedPreferences
                 saveUserProfile(userProfile)
 
+                userProfile.initRatedSongs()
+
                 val intent = Intent(this@MainActivity, MainMenu::class.java).apply {
                     putExtra("USER_PROFILE", userProfile)
                 }

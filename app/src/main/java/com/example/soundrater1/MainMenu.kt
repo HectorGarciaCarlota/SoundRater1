@@ -67,6 +67,7 @@ class MainMenu : AppCompatActivity() {
         recyclerView.adapter = trackAdapter
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+
         bottomNavigationView.setOnNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.navigation_main_menu -> {
@@ -78,7 +79,10 @@ class MainMenu : AppCompatActivity() {
                     val intent = Intent(this, MyProfile::class.java)
                     startActivity(intent)
                     finish()
-                    true // return true to show the item as selected
+
+                    // Manually set 'dummy_item' as selected again
+                    bottomNavigationView.selectedItemId = R.id.dummy_item
+                    true
                 }
                 else -> false
             }
@@ -291,6 +295,7 @@ class MainMenu : AppCompatActivity() {
                 putExtra("RATED_SONG", ratedSong)
             }
         }
+
         startActivity(intent)
     }
 

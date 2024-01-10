@@ -1,8 +1,8 @@
-<!-- Use FrameLayout to layer images -->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    tools:ignore="MissingDefaultResource">
 
     <!-- Blurred Background ImageView -->
     <ImageView
@@ -10,9 +10,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scaleType="centerCrop"
-        android:alpha="0.3" /> <!-- Adjust alpha for desired blur effect -->
+        android:alpha="0.3" />
 
-    <!-- LinearLayout for other contents -->
+    <!-- Main Vertical LinearLayout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -20,54 +20,51 @@
         android:padding="16dp"
         android:gravity="center_horizontal">
 
-        <!-- Clear Foreground ImageView -->
+        <!-- ImageViewAlbum -->
         <ImageView
             android:id="@+id/imageViewAlbum"
-            android:layout_width="327dp"
-            android:layout_height="279dp"
+            android:layout_width="151dp"
+            android:layout_height="126dp"
             android:layout_gravity="center"
-            android:layout_marginTop="32dp" />
+            android:layout_marginTop="16dp" />
 
         <!-- TextView for Track Name -->
-
-        <!-- TextView for Artist Name -->
-
         <TextView
             android:id="@+id/textViewTrackName"
-            android:layout_width="311dp"
-            android:layout_height="82dp"
-            android:layout_marginTop="50dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="24sp"
+            android:textSize="20sp"
             android:textStyle="bold"
-            />
+            android:layout_marginTop="8dp" />
 
+        <!-- TextView for Artist Name -->
         <TextView
             android:id="@+id/textViewArtistName"
-            android:layout_width="234dp"
-            android:layout_height="49dp"
-            android:layout_marginTop="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="20sp" />
+            android:textSize="18sp"
+            android:layout_marginTop="4dp" />
 
         <!-- RatingBar for user rating -->
         <RatingBar
             android:id="@+id/ratingBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
             android:numStars="5"
             android:rating="0"
-            android:stepSize="1.0" />
+            android:stepSize="1.0"
+            android:layout_marginTop="8dp" />
 
         <Button
             android:id="@+id/btnDeleteRating"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
+            android:background="@drawable/button_style"
             android:text="@string/delete_rating"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:layout_marginTop="8dp" />
 
-        <!-- Add other views as needed -->
     </LinearLayout>
 </FrameLayout>

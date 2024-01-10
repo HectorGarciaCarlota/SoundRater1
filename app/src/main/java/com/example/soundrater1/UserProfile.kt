@@ -40,7 +40,7 @@ data class UserProfile(
             parcel.readList(this, RatedSong::class.java.classLoader) // Read the rated songs list from the parcel
         },
     ) {
-        initRatedSongs()
+
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

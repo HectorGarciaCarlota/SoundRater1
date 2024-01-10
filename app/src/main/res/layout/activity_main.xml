@@ -1,21 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimaryDark"
+    android:background="#FFFFFF"
     tools:context=".MainActivity">
 
-    <Button
-        android:id="@+id/spotify_login_btn"
+    <!-- ImageView at the bottom center -->
+    <ImageView
+        android:id="@+id/logo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="32dp"
+        app:srcCompat="@mipmap/app_icon" />
+
+    <!-- Button centered both vertically and horizontally -->
+    <Button
+        android:id="@+id/spotify_login_btn"
+        android:layout_width="225dp"
+        android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:background="@drawable/rounded_corners"
+        android:background="@drawable/button_style"
         android:drawablePadding="8dp"
         android:padding="8dp"
         android:text="Log in with Spotify"
         android:textAllCaps="false"
-        android:textColor="@android:color/black"
-        android:textColorHighlight="#FFFFFF" />
+        android:textColor="#FFFFFF"
+        app:icon="@drawable/bxl_spotify"
+        app:iconGravity="textStart"
+        app:iconPadding="16dp" />
+
 </RelativeLayout>

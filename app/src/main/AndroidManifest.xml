@@ -20,6 +20,7 @@
         <activity
             android:name=".RateSong"
             android:exported="false" />
+
         <activity
             android:name=".MainMenu"
             android:exported="false" />
