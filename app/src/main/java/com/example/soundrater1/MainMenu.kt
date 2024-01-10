@@ -111,11 +111,29 @@ class MainMenu : AppCompatActivity() {
         }
 
         ratedSongsRecyclerView.adapter = ratedSongAdapter
+
         // Set up the SearchView for Spotify song search
         val searchView = findViewById<SearchView>(R.id.searchView)
-
         searchView.setOnClickListener {
-            searchView.isIconified = false // This will open the SearchView when ever is clicked on it : )
+            searchView.isIconified = false
+        }
+
+        fun updateSearchViewBackground(searchView: SearchView, useDefaultBackground: Boolean) {
+            if (useDefaultBackground) {
+                // Set the default background (null for no background)
+                searchView.background = null
+            } else {
+                // Set your custom background
+                searchView.setBackgroundResource(R.drawable.searchview_border)
+            }
+        }
+
+        // Initialize the SearchView with your custom background
+        updateSearchViewBackground(searchView, false)
+
+        // Set listener for focus changes and text changes in SearchView
+        searchView.setOnQueryTextFocusChangeListener { _, hasFocus ->
+            updateSearchViewBackground(searchView, hasFocus || searchView.query.isNotEmpty())
         }
 
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
@@ -124,24 +142,16 @@ class MainMenu : AppCompatActivity() {
                     searchSpotifySongs(it)
                     updateRecyclerViewVisibility(true)
                 }
-
                 hideKeyboard()
-
                 return true
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
+                updateSearchViewBackground(searchView, searchView.hasFocus() || newText?.isNotEmpty() == true)
                 if (newText.isNullOrEmpty()) {
                     updateRecyclerViewVisibility(false)
                 }
-
                 return true
-            }
-
-            // Function that closes the keyboard
-            private fun hideKeyboard() {
-                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.hideSoftInputFromWindow(searchView.windowToken, 0)
             }
         })
 
@@ -154,6 +164,28 @@ class MainMenu : AppCompatActivity() {
 
             if (!hasFocus) {
                 hideKeyboard()
+            }
+        }
+
+        searchView.setOnQueryTextFocusChangeListener { v, hasFocus ->
+            fun updateSearchViewBackground(searchView: SearchView, useDefaultBackground: Boolean) {
+                if (useDefaultBackground) {
+                    // Establece el fondo por defecto
+                    searchView.background = null
+                } else {
+                    // Establece tu fondo personalizado
+                    searchView.setBackgroundResource(R.drawable.searchview_border)
+                }
+            }
+
+            updateSearchViewBackground(searchView, hasFocus || searchView.query.isNotEmpty())
+
+            if (hasFocus) {
+                // Establece el fondo por defecto cuando el SearchView está activo
+                searchView.background = null
+            } else {
+                // Restablece tu fondo personalizado cuando el SearchView pierde el enfoque
+                searchView.setBackgroundResource(R.drawable.searchview_border)
             }
         }
 
@@ -172,6 +204,8 @@ class MainMenu : AppCompatActivity() {
                     val searchView = findViewById<SearchView>(R.id.searchView)
                     searchView.clearFocus()
                     hideKeyboard()
+
+                    updateSearchViewBackground(searchView, true)
                 }
             }
         })
