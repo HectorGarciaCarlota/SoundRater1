@@ -3,14 +3,18 @@ package com.example.soundrater1
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
+import jp.wasabeef.glide.transformations.BlurTransformation
 
 class MyProfile : AppCompatActivity() {
     private var userProfile: UserProfile? = null
@@ -25,6 +29,7 @@ class MyProfile : AppCompatActivity() {
         userProfile = Gson().fromJson(userProfileJson, UserProfile::class.java)
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        val backGroundImage = findViewById<ImageView>(R.id.ivBlurredAlbumCover)
         val profileImageView = findViewById<ImageView>(R.id.profile_image)
         val nameTextView = findViewById<TextView>(R.id.name)
         val emailTextView = findViewById<TextView>(R.id.email)
@@ -48,6 +53,20 @@ class MyProfile : AppCompatActivity() {
             val countryText = getString(R.string.profile_country, it.Country)
             countryTextView.text = countryText
 
+            if (it.ratedSongs.size > 0) {
+                val lastSongRated = it.ratedSongs.last()
+
+                // Use Glide to load the album cover image into the ImageView.
+                Glide.with(this).load(lastSongRated.imageUri).into(backGroundImage)
+
+                // Use Glide with a blur transformation to load a blurred version of the album image as a background.
+                Glide.with(this)
+                    .load(lastSongRated.imageUri)
+                    .apply(RequestOptions.bitmapTransform(BlurTransformation(25, 3)))
+                    .into(backGroundImage)
+
+                backGroundImage.visibility = View.VISIBLE
+            }
 
             // Using Glide library to change images
             Glide.with(this).load(it.ImageUrl).into(profileImageView)

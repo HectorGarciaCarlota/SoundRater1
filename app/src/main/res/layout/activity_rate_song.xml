@@ -66,6 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
             android:text="@string/delete_rating"
+            android:background="@drawable/button_style"
             android:visibility="gone"/>
 
         <!-- Add other views as needed -->
