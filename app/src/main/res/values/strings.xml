@@ -4,6 +4,7 @@
     <string name="title_profile">Profile</string>
     <string name="profile_email">%1$s</string>
     <string name="rated_songs_count">Rated songs\n\n%1$d</string>
+    <string name="rated_songs_count_land">Rated songs: %1$d</string>
     <string name="profile_country">%1$s</string>
     <string name="delete_rating">Delete rating</string>
 </resources>

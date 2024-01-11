@@ -3,6 +3,7 @@ package com.example.soundrater1
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.opengl.Visibility
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -14,11 +15,12 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.gson.Gson
+import de.hdodenhof.circleimageview.CircleImageView
 import jp.wasabeef.glide.transformations.BlurTransformation
 
 class MyProfile : AppCompatActivity() {
     private var userProfile: UserProfile? = null
-    @SuppressLint("SetTextI18n")
+    @SuppressLint("SetTextI18n", "WrongViewCast")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_profile)
@@ -30,7 +32,7 @@ class MyProfile : AppCompatActivity() {
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         val backGroundImage = findViewById<ImageView>(R.id.ivBlurredAlbumCover)
-        val profileImageView = findViewById<ImageView>(R.id.profile_image)
+        val profileImageView = findViewById<CircleImageView>(R.id.profile_image)
         val nameTextView = findViewById<TextView>(R.id.name)
         val emailTextView = findViewById<TextView>(R.id.email)
         val ratedSongsCountTextView = findViewById<TextView>(R.id.rated_songs_count)
@@ -47,7 +49,16 @@ class MyProfile : AppCompatActivity() {
             nameTextView.text = it.Username // Set ups value for actual username
             emailTextView.text = getString(R.string.profile_email, it.Email) // Set ups value for actual email, made a string value :9
             // Set the rated songs count
-            val ratedSongsText = getString(R.string.rated_songs_count, it.ratedSongs.size) // Set ups value for ratedSongs number, made a string value :9
+
+            // Put diferent text depends on the lanscape mode
+            var ratedSongsText = ""
+
+            if (resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+                ratedSongsText = getString(R.string.rated_songs_count_land, it.ratedSongs.size) // Set ups value for ratedSongs number, made a string value :9
+            } else {
+                ratedSongsText = getString(R.string.rated_songs_count, it.ratedSongs.size) // Set ups value for ratedSongs number, made a string value :9
+            }
+
             ratedSongsCountTextView.text = ratedSongsText
 
             val countryText = getString(R.string.profile_country, it.Country)
